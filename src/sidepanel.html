@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Rangkumin</title>
+    <link rel="stylesheet" href="output.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"
+    />
+  </head>
+
+  <body class="rk-shell">
+    <!-- ── Header ── -->
+    <header
+      class="bg-ink-900 px-4 sm:px-6 py-4 flex items-center gap-3 shrink-0"
+    >
+      <div
+        class="w-7 h-7 bg-brand-400 rounded-lg flex items-center justify-center shrink-0"
+      >
+        <svg
+          class="w-4 h-4"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="white"
+          stroke-width="2.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M4 6h16M4 10h10M4 14h12M4 18h8" />
+        </svg>
+      </div>
+      <div>
+        <p
+          class="text-white text-[15px] font-semibold tracking-[-0.3px] leading-none"
+        >
+          Rangkumin
+        </p>
+        <p class="text-ink-600 text-[11px] mt-0.75 leading-none">
+          Academic Summarizer
+        </p>
+      </div>
+      <div
+        class="ml-auto flex items-center gap-1.25 bg-brand-400/10 rounded-full px-2 py-1"
+      >
+        <span
+          class="w-1.5 h-1.5 bg-brand-400 rounded-full animate-pulse2 block"
+        ></span>
+        <span class="text-brand-200 text-[10px] font-medium tracking-wide"
+          >Ready</span
+        >
+      </div>
+    </header>
+
+    <main
+      class="flex-1 p-4 sm:p-6 w-full sm:max-w-90 sm:mx-auto md:max-w-4xl md:grid md:grid-cols-2 md:gap-6 md:items-start"
+    >
+      <!-- Kolom kiri: API Config + Tips -->
+      <div class="flex flex-col gap-3 mb-3 md:mb-0">
+        <!-- API Configuration -->
+        <div class="rk-card">
+          <div class="rk-card-header">
+            <i class="ti ti-key text-ink-600 text-sm" aria-hidden="true"></i>
+            <p class="rk-card-title">API Configuration</p>
+            <span
+              class="ml-auto text-[9px] font-semibold text-brand-200 bg-brand-50 px-1.75 py-0.5 rounded-full uppercase tracking-[0.5px]"
+              >BYOK</span
+            >
+          </div>
+          <div class="rk-card-body">
+            <div class="flex flex-col gap-1.25">
+              <label for="provider" class="rk-label">Models AI</label>
+              <div class="relative">
+                <select id="provider" class="rk-select">
+                  <option value="gemini">Gemini 1.5 Flash</option>
+                  <option value="groq">Groq — Llama 3</option>
+                  <option value="openai">GPT-4o mini</option>
+                  <option value="anthropic">Claude 3 Haiku</option>
+                  <option value="deepseek">DeepSeek V3 Flash</option>
+                </select>
+                <i
+                  class="ti ti-chevron-down absolute right-2.5 top-1/2 -translate-y-1/2 text-ink-600 text-xs pointer-events-none"
+                  aria-hidden="true"
+                ></i>
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-1.25">
+              <label for="apiKey" class="rk-label">API Key</label>
+              <div class="relative">
+                <input
+                  type="password"
+                  id="apiKey"
+                  placeholder="sk-••••••••••••••••"
+                  class="rk-input"
+                />
+                <i
+                  class="ti ti-eye-off absolute right-2.75 top-1/2 -translate-y-1/2 text-ink-400 text-sm pointer-events-none"
+                  aria-hidden="true"
+                ></i>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between mt-0.5">
+              <div
+                id="savedIndicator"
+                class="hidden items-center gap-1 text-brand-400 text-[11px] font-medium"
+              >
+                <i class="ti ti-circle-check text-[13px]"></i>
+                <span>Tersimpan</span>
+              </div>
+              <div class="flex-1"></div>
+              <button id="saveConfig" class="rk-btn-dark">
+                <i
+                  class="ti ti-device-floppy text-[13px]"
+                  aria-hidden="true"
+                ></i>
+                Simpan Konfigurasi
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Supported Sources — hanya muncul di md+ -->
+        <div class="rk-card hidden md:block">
+          <div class="rk-card-header">
+            <i
+              class="ti ti-info-circle text-ink-600 text-sm"
+              aria-hidden="true"
+            ></i>
+            <p class="rk-card-title">Supported Sources</p>
+          </div>
+          <div class="rk-card-body">
+            <ul class="flex flex-col gap-2">
+              <li class="flex items-center gap-2 text-[12px] text-ink-700">
+                <i
+                  class="ti ti-check text-brand-400 text-sm shrink-0"
+                  aria-hidden="true"
+                ></i
+                >IEEE Xplore
+              </li>
+              <li class="flex items-center gap-2 text-[12px] text-ink-700">
+                <i
+                  class="ti ti-check text-brand-400 text-sm shrink-0"
+                  aria-hidden="true"
+                ></i
+                >ScienceDirect
+              </li>
+              <li class="flex items-center gap-2 text-[12px] text-ink-700">
+                <i
+                  class="ti ti-check text-brand-400 text-sm shrink-0"
+                  aria-hidden="true"
+                ></i
+                >SpringerLink
+              </li>
+              <li class="flex items-center gap-2 text-[12px] text-ink-700">
+                <i
+                  class="ti ti-check text-brand-400 text-sm shrink-0"
+                  aria-hidden="true"
+                ></i
+                >ACM Digital Library
+              </li>
+              <li class="flex items-center gap-2 text-[12px] text-ink-700">
+                <i
+                  class="ti ti-dots text-ink-400 text-sm shrink-0"
+                  aria-hidden="true"
+                ></i
+                >dan lainnya…
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Kolom kanan: Options + Output -->
+      <div class="flex flex-col gap-3">
+        <!-- Summary Options -->
+        <div class="rk-card">
+          <div class="rk-card-header">
+            <i
+              class="ti ti-adjustments-horizontal text-ink-600 text-sm"
+              aria-hidden="true"
+            ></i>
+            <p class="rk-card-title">Opsi Ringkasan</p>
+          </div>
+          <div class="rk-card-body">
+            <div class="flex flex-col gap-1.25">
+              <span class="rk-label">Gaya Sitasi</span>
+              <div class="flex gap-2">
+                <button data-citation="IEEE" class="citation-chip is-active">
+                  <span class="chip-name">IEEE</span>
+                  <span class="chip-sub">Standard</span>
+                </button>
+                <button data-citation="APA" class="citation-chip">
+                  <span class="chip-name">APA</span>
+                  <span class="chip-sub">7th Edition</span>
+                </button>
+                <button data-citation="Chicago" class="citation-chip">
+                  <span class="chip-name">Chicago</span>
+                  <span class="chip-sub">17th Ed</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-1.25">
+              <span class="rk-label">Bahasa Output</span>
+              <div class="flex gap-1.5 flex-wrap">
+                <button class="lang-chip is-active">Indonesia</button>
+                <button class="lang-chip">English</button>
+                <button class="lang-chip">Auto</button>
+              </div>
+            </div>
+
+            <hr class="border-t border-ink-100 my-0.5" />
+
+            <button id="summarizeBtn" class="rk-btn-primary">
+              <i class="ti ti-sparkles text-[15px]" aria-hidden="true"></i>
+              Ringkas Halaman Ini
+            </button>
+          </div>
+        </div>
+
+        <!-- Output -->
+        <div class="rk-card">
+          <div class="rk-card-header">
+            <i
+              class="ti ti-file-text text-ink-600 text-sm"
+              aria-hidden="true"
+            ></i>
+            <p class="rk-card-title">Hasil</p>
+            <div class="ml-auto">
+              <button id="copyBtn" title="Salin hasil" class="rk-icon-btn">
+                <i class="ti ti-copy" aria-hidden="true"></i>
+              </button>
+            </div>
+          </div>
+          <div id="output" class="px-4 py-3 min-h-20">
+            <div class="rk-empty">
+              <i
+                class="ti ti-article text-2xl opacity-40"
+                aria-hidden="true"
+              ></i>
+              <span class="text-[12px] text-center leading-relaxed">
+                Buka halaman jurnal lalu<br />tekan "Ringkas Halaman Ini"
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- ── Footer ── -->
+    <footer
+      class="px-4 sm:px-6 py-2.5 border-t border-ink-200 bg-white flex items-center justify-between shrink-0"
+    >
+      <span class="text-[10px] text-ink-400 font-medium tracking-[0.3px]">
+        Rangku<span class="text-brand-400">min</span> v1.0
+      </span>
+      <span
+        class="text-[10px] text-ink-400 font-medium tracking-[0.3px] hover:underline hover:text-brand-400 cursor-pointer"
+      >
+        <a href="https://pipuyy.vercel.app/" target="_blank" rel="noreferrer"
+          >Author</a
+        >
+      </span>
+    </footer>
+
+    <script src="sidepanel.js"></script>
+  </body>
+</html>
