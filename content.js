@@ -175,6 +175,83 @@ function getPublisher() {
   return "Penerbit Tidak Diketahui";
 }
 
+function getPublicationDate() {
+  /**
+   * - type "meta" : get atribute 'content' (or 'datetime' if tag <time>)
+   * - type "ui"   : get from teks innerText
+   */
+  const dateSelectors = [
+    {
+      platform: "Standar Akademik",
+      type: "meta",
+      query:
+        'meta[name="citation_publication_date"], meta[name="citation_date"]',
+    },
+    {
+      platform: "Dublin Core",
+      type: "meta",
+      query: 'meta[name="DC.Date"], meta[name="DC.Issued"]',
+    },
+    {
+      platform: "Open Graph",
+      type: "meta",
+      query: 'meta[property="article:published_time"]',
+    },
+    {
+      platform: "Schema.org",
+      type: "meta",
+      query: 'meta[itemprop="datePublished"]',
+    },
+
+    { platform: "IEEE Xplore", type: "ui", query: ".doc-abstract-pubdate" },
+    {
+      platform: "ScienceDirect",
+      type: "ui",
+      query: ".publication-date, .available-online",
+    },
+
+    { platform: "Umum (Tag Time)", type: "meta", query: "time[datetime]" }, // Mencari tag <time> yang memiliki atribut datetime
+    {
+      platform: "Umum (Class)",
+      type: "ui",
+      query: ".date, .pub-date, .published-date, .publication-date",
+    },
+  ];
+
+  for (const selector of dateSelectors) {
+    const nodes = document.querySelectorAll(selector.query);
+
+    if (nodes.length > 0) {
+      let dateText = "";
+
+      // Ekstraksi berdasarkan tipe
+      if (selector.type === "meta") {
+        dateText = nodes[0].content || nodes[0].getAttribute("datetime") || "";
+      } else if (selector.type === "ui") {
+        dateText = nodes[0].innerText;
+      }
+
+      if (dateText) {
+        // Sanitization
+        const cleanedDate = dateText
+          .trim()
+          .replace(
+            /^(Date of Publication|Published|Available online|Publication date)[\s\:\-]*/i,
+            "",
+          )
+          .replace(/\n/g, " ")
+          .trim();
+
+        if (cleanedDate.length >= 4) {
+          return cleanedDate;
+        }
+      }
+    }
+  }
+
+  return "Tanggal Tidak Diketahui";
+}
+
 function getAbstract() {
   /**
    * - type "meta" : get atribute from 'content'
@@ -301,12 +378,7 @@ function getJournalMetadata() {
   const authors = getAuthors();
   const publisher = getPublisher();
   const abstract = getAbstract();
-
-  const date =
-    document.querySelector('meta[name="citation_publication_date"]')?.content ||
-    document.querySelector('meta[name="citation_date"]')?.content ||
-    "Tahun Tidak Diketahui";
-
+  const date = getPublicationDate();
   const mainText = getArticleContent();
 
   return { title, authors, date, publisher, abstract, content: mainText };
