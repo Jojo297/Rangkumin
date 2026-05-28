@@ -1,0 +1,24 @@
+{
+  "manifest_version": 3,
+  "name": "Rangkumin",
+  "version": "1.0",
+  "description": "Ringkas jurnal ilmiah HTML langsung dari side panel dengan standar sitasi.",
+  "permissions": ["sidePanel", "activeTab", "scripting", "storage"],
+  "host_permissions": ["<all_urls>", "https://*://*", "*://*/*"],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_end"
+    }
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  },
+  "action": {
+    "default_title": "Buka Panel Ringkasan"
+  }
+}

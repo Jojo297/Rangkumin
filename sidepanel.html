@@ -1,0 +1,111 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      body {
+        font-family:
+          system-ui,
+          -apple-system,
+          sans-serif;
+        padding: 15px;
+        margin: 0;
+        background: #f9f9f9;
+        color: #333;
+        font-size: 14px;
+      }
+      .section {
+        background: white;
+        padding: 12px;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      }
+      h3 {
+        margin-top: 0;
+        margin-bottom: 10px;
+        color: #111;
+        font-size: 15px;
+      }
+      label {
+        display: block;
+        margin: 8px 0 4px;
+        font-weight: 500;
+        font-size: 12px;
+      }
+      input,
+      select {
+        width: 100%;
+        padding: 6px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+      }
+      button {
+        width: 100%;
+        background: #2563eb;
+        color: white;
+        border: none;
+        padding: 8px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+        margin-top: 10px;
+      }
+      button:hover {
+        background: #1d4ed8;
+      }
+      #output {
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        line-height: 1.5;
+        font-size: 13px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="section">
+      <h3>Konfigurasi AI (BYOK)</h3>
+      <label>Pilih Provider</label>
+      <select id="provider">
+        <option value="gemini">Google Gemini</option>
+        <option value="openai">OpenAI</option>
+      </select>
+
+      <label>API Key</label>
+      <input type="password" id="apiKey" placeholder="Masukkan API Key Anda" />
+      <button id="saveConfig" style="background: #059669">
+        Simpan Konfigurasi
+      </button>
+    </div>
+
+    <div class="section">
+      <h3>Opsi Ringkasan</h3>
+      <label>Gaya Sitasi</label>
+      <select id="citationStyle">
+        <option value="IEEE">IEEE Standard</option>
+        <option value="APA">APA 7th Edition</option>
+      </select>
+      <button id="summarizeBtn">Ringkas Halaman Ini</button>
+    </div>
+
+    <div class="section">
+      <h3>Hasil Ringkasan & Sitasi</h3>
+      <p>judul:</p>
+      <div id="title"></div>
+      <p>penulis:</p>
+      <div id="authors"></div>
+      <p>tanggal:</p>
+      <div id="date"></div>
+      <p>penerbit:</p>
+      <div id="publisher"></div>
+      <p>abstract:</p>
+      <div id="abstract"></div>
+      <p>halaman:</p>
+      <div id="content"></div>
+      <div id="output">Hasil akan muncul di sini...</div>
+    </div>
+
+    <script src="sidepanel.js"></script>
+  </body>
+</html>
