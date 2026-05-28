@@ -127,10 +127,19 @@ document.getElementById("summarizeBtn").addEventListener("click", async () => {
       }
 
       try {
-        //   const summary = await callAIProvider(provider, apiKey, journalData, citationStyle, outputLanguage);
-        console.log(journalData);
+        const summary = await callAIProvider(
+          provider,
+          apiKey,
+          journalData,
+          citationStyle,
+          outputLanguage,
+        );
+        // response
+        outputDiv.innerText = summary;
+        // console.log(summary);
       } catch (err) {
         outputDiv.innerText = `Error API: ${err.message}`;
+        console.log(`error API: ${err.message}`);
       }
     },
   );
@@ -153,7 +162,7 @@ ${data.content.substring(0, 12000)}`;
 
   if (provider === "gemini") {
     // Endpoint resmi Google Gemini Pro API
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
     const response = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
