@@ -1,3 +1,52 @@
+// logic style selection citation
+document.querySelectorAll(".citation-chip").forEach((button) => {
+  button.addEventListener("click", function () {
+    document
+      .querySelectorAll(".citation-chip")
+      .forEach((c) => c.classList.remove("is-active"));
+    // Tambahkan class is-active ke tombol yang diklik
+    this.classList.add("is-active");
+  });
+});
+
+//  logic style selection language
+document.querySelectorAll(".lang-chip").forEach((button) => {
+  button.addEventListener("click", function () {
+    document
+      .querySelectorAll(".lang-chip")
+      .forEach((c) => c.classList.remove("is-active"));
+    this.classList.add("is-active");
+  });
+});
+
+// logic copy teks
+const copyBtn = document.getElementById("copyBtn");
+if (copyBtn) {
+  copyBtn.addEventListener("click", function () {
+    const text = document.getElementById("output").innerText || "";
+    if (text && navigator.clipboard) {
+      navigator.clipboard.writeText(text);
+      // Opsional: Beri feedback visual (contoh ubah ikon sejenak)
+      const icon = this.querySelector("i");
+      icon.className = "ti ti-check text-green-500";
+      setTimeout(() => {
+        icon.className = "ti ti-copy";
+      }, 2000);
+    }
+  });
+}
+
+// --- Getter Functions
+window.getSelectedCitation = () => {
+  const c = document.querySelector(".citation-chip.is-active");
+  return c ? c.dataset.citation : "IEEE";
+};
+
+window.getSelectedLanguage = () => {
+  const c = document.querySelector(".lang-chip.is-active");
+  return c ? c.innerText.trim() : "Indonesia";
+};
+
 document.addEventListener("DOMContentLoaded", () => {
   chrome.storage.local.get(["provider", "apiKey", "citationStyle"], (res) => {
     if (res.provider) document.getElementById("provider").value = res.provider;
@@ -7,10 +56,11 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-// 2. Simpan konfigurasi ke chrome.storage
+// save configuration to chrome.storage
 document.getElementById("saveConfig").addEventListener("click", () => {
   const provider = document.getElementById("provider").value;
   const apiKey = document.getElementById("apiKey").value;
+  const ind = document.getElementById("savedIndicator");
 
   // validation input
   if (!apiKey) {
@@ -20,9 +70,15 @@ document.getElementById("saveConfig").addEventListener("click", () => {
   chrome.storage.local.set({ provider, apiKey }, () => {
     alert("Konfigurasi berhasil disimpan secara aman.");
   });
+  ind.classList.remove("hidden");
+  ind.classList.add("flex");
+  setTimeout(() => {
+    ind.classList.add("hidden");
+    ind.classList.remove("flex");
+  }, 2500);
 });
 
-// 3. Proses Ringkas Halaman
+// process summarize
 document.getElementById("summarizeBtn").addEventListener("click", async () => {
   const outputDiv = document.getElementById("output");
   const outputTitle = document.getElementById("title");
@@ -33,7 +89,7 @@ document.getElementById("summarizeBtn").addEventListener("click", async () => {
   const outputContent = document.getElementById("content");
   outputDiv.innerText = "Mengekstrak teks halaman...";
 
-  // Ambil tab yang sedang aktif
+  // get tab active
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 
   if (!tab || !tab.id) {
@@ -41,7 +97,7 @@ document.getElementById("summarizeBtn").addEventListener("click", async () => {
     return;
   }
 
-  // LANGSUNG kirim pesan ke content.js yang sudah standby di halaman web
+  // send message to content.js
   chrome.tabs.sendMessage(
     tab.id,
     { action: "EXTRACT_TEXT" },
@@ -61,8 +117,9 @@ document.getElementById("summarizeBtn").addEventListener("click", async () => {
       outputDiv.innerText = "Menghubungi AI untuk membuat ringkasan...";
 
       const provider = document.getElementById("provider").value;
-      const citationStyle = document.getElementById("citationStyle").value;
       const { apiKey } = await chrome.storage.local.get(["apiKey"]);
+      const citationStyle = window.getSelectedCitation();
+      const outputLanguage = window.getSelectedLanguage();
 
       if (!apiKey) {
         outputDiv.innerText = "Error: API Key belum diisi/disimpan.";
@@ -70,13 +127,7 @@ document.getElementById("summarizeBtn").addEventListener("click", async () => {
       }
 
       try {
-        //   const summary = await callAIProvider(provider, apiKey, journalData, citationStyle);
-        ((outputTitle.innerText = journalData.title),
-          (outputAuthor.innerText = journalData.authors),
-          (outputDate.innerText = journalData.date),
-          (outputPub.innerText = journalData.publisher),
-          (outputAbstract.innerText = journalData.abstract),
-          (outputContent.innerText = journalData.content));
+        //   const summary = await callAIProvider(provider, apiKey, journalData, citationStyle, outputLanguage);
         console.log(journalData);
       } catch (err) {
         outputDiv.innerText = `Error API: ${err.message}`;
@@ -85,9 +136,20 @@ document.getElementById("summarizeBtn").addEventListener("click", async () => {
   );
 });
 
-// 4. Integrasi Fetch ke API AI (Tanpa dependensi SDK eksternal)
-async function callAIProvider(provider, apiKey, data, style) {
-  const prompt = `Anda adalah asisten akademik. Ringkas teks jurnal berikut dengan fokus pada Masalah Utama, Metodologi, dan Hasil. Di bagian akhir, sediakan teks referensi/sitasi siap pakai dalam format ${style} berdasarkan metadata ini:\nJudul: ${data.title}\nPenulis: ${data.authors}\nTahun: ${data.date}\nPenerbit: ${data.publisher}\n\nTeks Jurnal:\n${data.content.substring(0, 12000)}`;
+// fetch api AI
+async function callAIProvider(provider, apiKey, data, style, language) {
+  const prompt = `Anda adalah asisten akademik. Ringkas teks jurnal berikut dengan fokus pada Masalah Utama, Metodologi, dan Hasil. 
+
+WAJIB tulis seluruh hasil ringkasan Anda menggunakan bahasa: ${language}. 
+
+Di bagian akhir, sediakan teks referensi/sitasi siap pakai dalam format ${style} berdasarkan metadata ini:
+- Judul: ${data.title}
+- Penulis: ${data.authors}
+- Tahun: ${data.date}
+- Penerbit: ${data.publisher}
+
+Teks Jurnal:
+${data.content.substring(0, 12000)}`;
 
   if (provider === "gemini") {
     // Endpoint resmi Google Gemini Pro API
@@ -102,7 +164,6 @@ async function callAIProvider(provider, apiKey, data, style) {
   }
 
   if (provider === "openai") {
-    // Endpoint resmi OpenAI Chat Completion
     const url = `https://api.openai.com/v1/chat/completions`;
     const response = await fetch(url, {
       method: "POST",
@@ -111,7 +172,7 @@ async function callAIProvider(provider, apiKey, data, style) {
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: "gpt-4o-mini", // Model ringan dan cepat
+        model: "gpt-4o-mini",
         messages: [{ role: "user", content: prompt }],
       }),
     });

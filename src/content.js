@@ -384,7 +384,7 @@ function getJournalMetadata() {
   return { title, authors, date, publisher, abstract, content: mainText };
 }
 
-// Menjawab request dari sidepanel.js
+// answer req from sidePanel.js
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === "EXTRACT_TEXT") {
     sendResponse(getJournalMetadata());

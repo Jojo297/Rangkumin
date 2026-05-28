@@ -1,0 +1,168 @@
+@import "tailwindcss";
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap");
+
+@theme {
+  /* Fonts */
+  --font-sans: "DM Sans", sans-serif;
+  --font-mono: "DM Mono", monospace;
+
+  /* Brand (teal) */
+  --color-brand-50: #e1f5ee;
+  --color-brand-100: #9fe1cb;
+  --color-brand-200: #5dcaa5;
+  --color-brand-400: #1d9e75;
+  --color-brand-600: #0f6e56;
+  --color-brand-800: #085041;
+
+  /* Ink (neutral) */
+  --color-ink-50: #f7f6f3;
+  --color-ink-100: #ebebeb;
+  --color-ink-200: #d3d1c7;
+  --color-ink-400: #b4b2a9;
+  --color-ink-600: #888780;
+  --color-ink-700: #5f5e5a;
+  --color-ink-800: #444441;
+  --color-ink-900: #2c2c2a;
+
+  /* Animation */
+  --animate-pulse2: pulse2 2s ease-in-out infinite;
+
+  @keyframes pulse2 {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.3;
+    }
+  }
+}
+
+@layer base {
+  html,
+  body {
+    @apply font-sans text-ink-900 bg-ink-50 antialiased;
+  }
+}
+
+@layer components {
+  /* ── Shell ── */
+  .rk-shell {
+    @apply flex flex-col min-h-screen w-full;
+  }
+
+  /* ── Card ── */
+  .rk-card {
+    @apply bg-white rounded-xl border border-ink-200/60 overflow-hidden;
+  }
+
+  .rk-card-header {
+    @apply px-4 py-[10px] border-b border-ink-100 flex items-center gap-[7px];
+  }
+
+  .rk-card-title {
+    @apply text-[11px] font-semibold text-ink-700 uppercase tracking-[0.7px];
+  }
+
+  .rk-card-body {
+    @apply px-4 py-3 flex flex-col gap-[10px];
+  }
+
+  /* ── Form ── */
+  .rk-label {
+    @apply text-[11px] font-medium text-ink-600 tracking-[0.2px];
+  }
+
+  .rk-select {
+    @apply w-full appearance-none bg-ink-50 border border-ink-200 rounded-lg
+           pl-3 pr-8 py-2 text-[13px] text-ink-900 cursor-pointer
+           focus:outline-none focus:border-brand-400 transition-colors;
+  }
+
+  .rk-input {
+    @apply w-full bg-ink-50 border border-ink-200 rounded-lg
+           pl-3 pr-10 py-2 font-mono text-[12px] text-ink-900
+           placeholder:text-ink-400
+           focus:outline-none focus:border-brand-400 transition-colors;
+  }
+
+  /* ── Buttons ── */
+  .rk-btn-dark {
+    @apply flex items-center gap-[6px] bg-ink-900 hover:bg-ink-800
+           active:scale-[0.98] text-white text-[12px] font-medium
+           px-4 py-2 rounded-lg transition-all cursor-pointer border-none;
+  }
+
+  .rk-btn-primary {
+    @apply w-full flex items-center justify-center gap-2
+           bg-brand-400 hover:bg-brand-600 active:scale-[0.98]
+           text-white text-[13px] font-semibold py-[11px] rounded-xl
+           transition-all cursor-pointer border-none;
+  }
+
+  .rk-icon-btn {
+    @apply text-ink-600 hover:text-ink-900 text-sm bg-transparent
+           border-none cursor-pointer p-0 flex items-center transition-colors;
+  }
+
+  /* ── Citation chips ── */
+  .citation-chip {
+    @apply flex-1 border border-ink-200 bg-ink-50 rounded-lg
+           px-[10px] py-2 flex flex-col items-center gap-1
+           cursor-pointer transition-all;
+  }
+
+  .citation-chip.is-active {
+    @apply border-brand-400 bg-brand-50;
+  }
+
+  .citation-chip .chip-name {
+    @apply text-[12px] font-medium text-ink-900;
+  }
+
+  .citation-chip.is-active .chip-name {
+    @apply text-brand-600;
+  }
+
+  .citation-chip .chip-sub {
+    @apply text-[10px] text-ink-600;
+  }
+
+  .citation-chip.is-active .chip-sub {
+    @apply text-brand-400;
+  }
+
+  /* ── Language chips ── */
+  .lang-chip {
+    @apply text-[11px] px-[9px] py-[3px] rounded-full border border-ink-200
+           bg-ink-50 text-ink-700 cursor-pointer transition-all;
+  }
+
+  .lang-chip.is-active {
+    @apply border-ink-900 bg-ink-900 text-white;
+  }
+
+  /* ── Toggle ── */
+  .rk-toggle {
+    @apply relative w-7 h-4 rounded-full bg-ink-200
+           transition-colors duration-200 border-none cursor-pointer p-0 flex-shrink-0;
+  }
+
+  .rk-toggle.is-on {
+    @apply bg-brand-400;
+  }
+
+  .rk-toggle .toggle-knob {
+    @apply absolute w-3 h-3 bg-white rounded-full top-[2px] left-[2px]
+           transition-all duration-200 block;
+  }
+
+  .rk-toggle.is-on .toggle-knob {
+    @apply left-[14px];
+  }
+
+  /* ── Empty state ── */
+  .rk-empty {
+    @apply flex flex-col items-center justify-center gap-[6px] py-4 text-ink-400;
+  }
+}
