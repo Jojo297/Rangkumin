@@ -1,3 +1,14 @@
+// get last summary user
+document.addEventListener("DOMContentLoaded", () => {
+  const outputDiv = document.getElementById("output");
+
+  chrome.storage.local.get(["lastSummary"], (result) => {
+    if (result.lastSummary) {
+      outputDiv.innerHTML = marked.parse(result.lastSummary);
+    }
+  });
+});
+
 // logic style selection citation
 document.querySelectorAll(".citation-chip").forEach((button) => {
   button.addEventListener("click", function () {
@@ -88,6 +99,7 @@ document.getElementById("summarizeBtn").addEventListener("click", async () => {
   const outputAbstract = document.getElementById("abstract");
   const outputContent = document.getElementById("content");
   outputDiv.innerText = "Mengekstrak teks halaman...";
+  const buttonSum = document.getElementById("summarizeBtn");
 
   // get tab active
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -114,6 +126,9 @@ document.getElementById("summarizeBtn").addEventListener("click", async () => {
         return;
       }
 
+      // delete last summary user
+      chrome.storage.local.remove(["lastSummary"]);
+
       outputDiv.innerText = "Menghubungi AI untuk membuat ringkasan...";
 
       const provider = document.getElementById("provider").value;
@@ -127,6 +142,9 @@ document.getElementById("summarizeBtn").addEventListener("click", async () => {
       }
 
       try {
+        buttonSum.disabled = true;
+        buttonSum.innerText = "Sedang memproses...";
+
         const summary = await callAIProvider(
           provider,
           apiKey,
@@ -135,11 +153,20 @@ document.getElementById("summarizeBtn").addEventListener("click", async () => {
           outputLanguage,
         );
         // response
-        outputDiv.innerText = summary;
-        // console.log(summary);
+        outputDiv.innerHTML = marked.parse(summary);
+
+        // save response to local storage
+        chrome.storage.local.set({ lastSummary: summary }, () => {
+          console.log("Ringkasan terakhir berhasil disimpan!");
+        });
       } catch (err) {
+        buttonSum.disabled = false;
+        buttonSum.innerText = "Ringkas Halaman Ini";
         outputDiv.innerText = `Error API: ${err.message}`;
         console.log(`error API: ${err.message}`);
+      } finally {
+        buttonSum.disabled = false;
+        buttonSum.innerText = "Ringkas Halaman Ini";
       }
     },
   );
@@ -161,7 +188,7 @@ Teks Jurnal:
 ${data.content.substring(0, 12000)}`;
 
   if (provider === "gemini") {
-    // Endpoint resmi Google Gemini Pro API
+    // Endpoint api Google Gemini
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
     const response = await fetch(url, {
       method: "POST",

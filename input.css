@@ -45,6 +45,29 @@
   }
 }
 
+@layer base {
+  .output-markdown p {
+    @apply mb-3 text-gray-700 leading-relaxed;
+  }
+  .output-markdown h1,
+  .output-markdown h2,
+  .output-markdown h3 {
+    @apply font-bold mt-5 mb-2 text-gray-900;
+  }
+  .output-markdown ul {
+    @apply list-disc pl-5 mb-3;
+  }
+  .output-markdown ol {
+    @apply list-decimal pl-5 mb-3;
+  }
+  .output-markdown li {
+    @apply mb-1;
+  }
+  .output-markdown hr {
+    @apply my-4 border-gray-300;
+  }
+}
+
 @layer components {
   /* ── Shell ── */
   .rk-shell {

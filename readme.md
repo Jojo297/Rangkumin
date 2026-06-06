@@ -78,7 +78,7 @@ Make sure you have Node.js installed. Run the following command to install the n
 npm install
 ```
 
-### 3. Install Dependencies
+### 3. Compile Styles
 
 Make sure you have Node.js installed. Run the following command to install the necessary dependencies (Tailwind CSS):
 
