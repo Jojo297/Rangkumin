@@ -67,26 +67,70 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-// save configuration to chrome.storage
-document.getElementById("saveConfig").addEventListener("click", () => {
-  const provider = document.getElementById("provider").value;
-  const apiKey = document.getElementById("apiKey").value;
-  const ind = document.getElementById("savedIndicator");
+const providerSelect = document.getElementById("provider");
+const apiKeyInput = document.getElementById("apiKey");
+const saveBtn = document.getElementById("saveConfig");
+const ind = document.getElementById("savedIndicator");
 
-  // validation input
+// Load the final model & API key
+document.addEventListener("DOMContentLoaded", () => {
+  chrome.storage.local.get(["provider", "apiKeys"], (result) => {
+    const savedProvider = result.provider || "gemini";
+    const keys = result.apiKeys || {}; // Ambil objek kumpulan key
+
+    // Show in UI
+    providerSelect.value = savedProvider;
+    // If api key null
+    apiKeyInput.value = keys[savedProvider] || "";
+  });
+});
+
+// Change model in dropdown
+providerSelect.addEventListener("change", (e) => {
+  const selectedProvider = e.target.value;
+
+  // Get the object from storage, and then matching with model
+  chrome.storage.local.get(["apiKeys"], (result) => {
+    const keys = result.apiKeys || {};
+    // Update input field
+    apiKeyInput.value = keys[selectedProvider] || "";
+  });
+
+  chrome.storage.local.set({ provider: selectedProvider });
+});
+
+// Save configuration API key
+saveBtn.addEventListener("click", () => {
+  const selectedProvider = providerSelect.value;
+  const apiKey = apiKeyInput.value.trim();
+
+  // Validasi input
   if (!apiKey) {
     alert("Masukkan API Key terlebih dahulu.");
     return;
   }
-  chrome.storage.local.set({ provider, apiKey }, () => {
-    alert("Konfigurasi berhasil disimpan secara aman.");
+
+  // Get last key, and then update new key
+  chrome.storage.local.get(["apiKeys"], (result) => {
+    const keys = result.apiKeys || {};
+    keys[selectedProvider] = apiKey; // Save key with spesific for this model
+
+    // Save to Chrome Storage
+    chrome.storage.local.set(
+      { provider: selectedProvider, apiKeys: keys },
+      () => {
+        alert("Konfigurasi berhasil disimpan secara aman.");
+
+        // animation save indicator
+        ind.classList.remove("hidden");
+        ind.classList.add("flex");
+        setTimeout(() => {
+          ind.classList.add("hidden");
+          ind.classList.remove("flex");
+        }, 2500);
+      },
+    );
   });
-  ind.classList.remove("hidden");
-  ind.classList.add("flex");
-  setTimeout(() => {
-    ind.classList.add("hidden");
-    ind.classList.remove("flex");
-  }, 2500);
 });
 
 // process summarize
@@ -132,7 +176,11 @@ document.getElementById("summarizeBtn").addEventListener("click", async () => {
       outputDiv.innerText = "Menghubungi AI untuk membuat ringkasan...";
 
       const provider = document.getElementById("provider").value;
-      const { apiKey } = await chrome.storage.local.get(["apiKey"]);
+
+      const result = await chrome.storage.local.get(["apiKeys"]);
+      const apiKeys = result.apiKeys || {};
+
+      const apiKey = apiKeys[provider];
       const citationStyle = window.getSelectedCitation();
       const outputLanguage = window.getSelectedLanguage();
 
@@ -199,8 +247,8 @@ ${data.content.substring(0, 12000)}`;
     return result.candidates[0].content.parts[0].text;
   }
 
-  if (provider === "openai") {
-    const url = `https://api.openai.com/v1/chat/completions`;
+  if (provider === "deepseek") {
+    const url = `https://api.deepseek.com/chat/completions`;
     const response = await fetch(url, {
       method: "POST",
       headers: {
@@ -208,7 +256,24 @@ ${data.content.substring(0, 12000)}`;
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: "gpt-4o-mini",
+        model: "deepseek-v4-flash",
+        messages: [{ role: "user", content: prompt }],
+      }),
+    });
+    const result = await response.json();
+    return result.choices[0].message.content;
+  }
+
+  if (provider === "qwen") {
+    const url = `https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/completions`;
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model: "qwen3.7-plus",
         messages: [{ role: "user", content: prompt }],
       }),
     });
