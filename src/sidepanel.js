@@ -176,11 +176,10 @@ document.getElementById("summarizeBtn").addEventListener("click", async () => {
       outputDiv.innerText = "Menghubungi AI untuk membuat ringkasan...";
 
       const provider = document.getElementById("provider").value;
-      // 1. Tarik objek apiKeys dari storage
+
       const result = await chrome.storage.local.get(["apiKeys"]);
       const apiKeys = result.apiKeys || {};
 
-      // 2. Ambil key spesifik sesuai dengan model yang sedang aktif
       const apiKey = apiKeys[provider];
       const citationStyle = window.getSelectedCitation();
       const outputLanguage = window.getSelectedLanguage();
@@ -248,8 +247,8 @@ ${data.content.substring(0, 12000)}`;
     return result.candidates[0].content.parts[0].text;
   }
 
-  if (provider === "openai") {
-    const url = `https://api.openai.com/v1/chat/completions`;
+  if (provider === "deepseek") {
+    const url = `https://api.deepseek.com/chat/completions`;
     const response = await fetch(url, {
       method: "POST",
       headers: {
@@ -257,7 +256,24 @@ ${data.content.substring(0, 12000)}`;
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: "gpt-4o-mini",
+        model: "deepseek-v4-flash",
+        messages: [{ role: "user", content: prompt }],
+      }),
+    });
+    const result = await response.json();
+    return result.choices[0].message.content;
+  }
+
+  if (provider === "qwen") {
+    const url = `https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/completions`;
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model: "qwen3.7-plus",
         messages: [{ role: "user", content: prompt }],
       }),
     });
